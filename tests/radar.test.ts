@@ -24,6 +24,8 @@ test("verified procurement awards remain historical evidence when model omits op
   const validated = validateRadar({ recommendations: [], opportunities: candidates }, [award], new Set(), now);
   assert.equal(validated.content.opportunities[0]!.status, "historical");
   assert.equal(validated.content.opportunities[0]!.deadline, null);
+  const provincial = { ...award, sourceId: "external-public-government", url: "https://www.gsei.com.cn/html/1337/2026-09-14/content-701629.html" };
+  assert.equal(historicalProcurementCandidates([provincial]).length, 1);
 });
 
 test("batch publishes only independently sourced candidates and retains rejection audit", () => {

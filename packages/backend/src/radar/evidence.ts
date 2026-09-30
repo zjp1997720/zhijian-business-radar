@@ -34,10 +34,10 @@ export const RadarSchema = z.object({
  * Preserve it even when the model elects to return only editorial topics. No
  * amount, customer identity or open deadline is inferred from the title. */
 export function historicalProcurementCandidates(inputs: RadarInput[]): z.infer<typeof RadarSchema>["opportunities"] {
-  return inputs.filter((s) => s.sourceId.startsWith("web-ccgp-") &&
-    /^https:\/\/www\.ccgp\.gov\.cn\/cggg\//.test(s.url) && historicalNotice(s.title) &&
+  return inputs.filter((s) => (s.sourceId.startsWith("web-ccgp-") || s.sourceId === "external-public-government") &&
+    /^https:\/\/(?:www\.ccgp\.gov\.cn\/cggg\/|www\.gsei\.com\.cn\/html\/1337\/)/.test(s.url) && historicalNotice(s.title) &&
     /人工智能|AI|智能体|大模型/i.test(s.title)).slice(0, 4).map((s) => ({
-      title: s.title, kind: "case", summary: "中国政府采购网已发布此项目的中标或成交结果，可用于研究已发生的采购需求与服务范围；这不是仍开放的招标。",
+      title: s.title, kind: "case", summary: "官方公告已发布此项目的中标或成交结果，可用于研究已发生的采购需求与服务范围；这不是仍开放的招标。",
       organization: null, region: null, deadline: null, deadlineCitation: null,
       recommendedAction: "阅读原始公告的服务要求和供应商信息，提炼培训或落地服务需求；如需跟进新采购，另查后续公告。",
       citations: [{ articleId: s.articleId, quote: s.title }],
