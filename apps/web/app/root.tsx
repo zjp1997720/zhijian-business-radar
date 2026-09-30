@@ -7,6 +7,7 @@ import {
 import type { ReactNode } from "react";
 import type { Route } from "./+types/root";
 import "./app.css";
+import "./features/radar/radar.css";
 import { Sidebar } from "./components/shell/Sidebar";
 import { MobileTabBar } from "./components/shell/MobileTabBar";
 import { BackToTop, NavigationProgress } from "./components/shell/Chrome";

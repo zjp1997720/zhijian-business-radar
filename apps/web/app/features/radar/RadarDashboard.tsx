@@ -6,7 +6,6 @@ import { EmptyState } from "../../components/ui/Page";
 import { buttonClass } from "../../components/ui/Controls";
 import { beijingDate } from "../../lib/format";
 import { opportunityState, radarTime, sourceHref, type RadarOpportunity, type RadarRecommendation, type RadarResponse } from "../../lib/radar";
-import "./radar.css";
 
 type View = "overview" | "recommendations" | "opportunities";
 type State = RadarOpportunity["status"];
