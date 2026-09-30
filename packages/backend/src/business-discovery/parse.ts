@@ -85,7 +85,7 @@ export function titleRelevant(title: string, rules: DiscoveryConfig["relevance"]
 
 /** Parse a labelled original-page date. Never use a URL path, RSS date, footer year or event date. */
 export function parsePublicationDate(value: string, now: Date): Date | null {
-  const text = value.trim();
+  const text = value.trim().replace(/^.*?(?=(?:发布时间|发布日期|发布于|发表时间)\s*[:：])/, "");
   const m = /^(?:发布时间|发布日期|发布于|发表时间|时间)?\s*[:：]?\s*(\d{4})[-/年](\d{1,2})[-/月](\d{1,2})(?:日)?(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?/.exec(text);
   if (!m) return null;
   const [year, month, day, hour, minute, second] = [m[1], m[2], m[3], m[4] ?? "0", m[5] ?? "0", m[6] ?? "0"].map(Number);
@@ -134,7 +134,8 @@ export function originalDate(html: string, now: Date, source?: CuratedSource): D
 export function verifyOriginal(html: string, url: string, rules: DiscoveryConfig["relevance"], now: Date, source?: CuratedSource): VerifiedArticle | null {
   if (challengePage(html)) throw new Error("anti-bot challenge on original page");
   const $ = cheerio.load(html);
-  const title = collapseWhitespace($("h1").first().text() || $("meta[property='og:title']").attr("content") || $("title").text()).slice(0, 1000);
+  const configuredTitle = source?.titleSelector ? $(source.titleSelector).first() : null;
+  const title = collapseWhitespace(configuredTitle?.attr("content") || configuredTitle?.text() || $("meta[name='ArticleTitle']").attr("content") || $("h1").first().text() || $("meta[property='og:title']").attr("content") || $("title").text()).slice(0, 1000);
   if (!title) return null;
   let bodyHtml = "";
   if (source?.bodySelector) {

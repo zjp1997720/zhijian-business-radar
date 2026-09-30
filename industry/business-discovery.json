@@ -213,7 +213,8 @@
       ],
       "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。",
       "bodySelector": ".v_news_content",
-      "dateSelector": ".dpzw > p span"
+      "dateSelector": ".times",
+      "titleSelector": "h3.nrh3"
     },
     {
       "id": "business-discovery-yueyang-science",
@@ -239,7 +240,8 @@
       "seedUrls": [
         "https://www.smelz.cn/px/detail-438.html"
       ],
-      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。",
+      "titleSelector": "h3"
     },
     {
       "id": "business-discovery-zhuhai-social",
