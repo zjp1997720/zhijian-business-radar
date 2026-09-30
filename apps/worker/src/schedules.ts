@@ -1,4 +1,5 @@
 // Cron-style schedules (Asia/Shanghai). Each run is recorded in job_runs; missed slots run once.
+import { generateRadar } from "@aihot/backend/radar/generate";
 import type { PgBoss } from "pg-boss";
 import { FEATURES } from "@aihot/industry/features";
 import { credential } from "@aihot/backend/config";
@@ -36,6 +37,11 @@ interface Scheduled {
 const collecting = process.env.COLLECT_ENABLED !== "false";
 
 export const SCHEDULES: Scheduled[] = [
+  { name: "radar.daily", cron: "0 8 * * *", missed: "once", run: async () => {
+    const result = await generateRadar();
+    if (result.status === "failed") throw new Error(result.error);
+    return result;
+  } },
   { name: "content.sweep", cron: "*/5 * * * *", run: sweepUnprocessed },
   // Full-text translations of newly selected items (model calls; off with MODEL_CALLS_ENABLED=false).
   { name: "content.translate", cron: "*/5 * * * *", run: () => translatePending() },

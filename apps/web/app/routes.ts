@@ -2,6 +2,9 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 
 export default [
   index("routes/home.tsx"),
+  route("recommendations", "routes/radar-recommendations.tsx"),
+  route("opportunities", "routes/radar-opportunities.tsx"),
+  route("selected", "routes/selected.tsx"),
   route("all", "routes/all.tsx"),
   route("all/search-busy", "routes/search-busy.tsx", { id: "all-search-busy" }),
   route("search-busy", "routes/search-busy.tsx", { id: "search-busy" }),

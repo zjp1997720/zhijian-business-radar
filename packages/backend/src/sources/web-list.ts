@@ -195,12 +195,12 @@ function headingDate(title: string, utcOffset = "+08:00"): Date | null | undefin
   return Number.isFinite(t) ? new Date(t) : null;
 }
 
-function fromDocusaurusChangelog(html: string, base: string, source: SourceRow): Candidate[] {
+export function fromDocusaurusChangelog(html: string, base: string, source: SourceRow): Candidate[] {
   const $ = cheerio.load(html);
   const out: Candidate[] = [];
   // A date heading is no update itself: it dates the updates under it, up to the next h2.
   let sectionDate: Date | null = null;
-  $("article h2[id], article h3[id], .markdown h2[id], .markdown h3[id]").each((_i, h) => {
+  $("article h2[id], article h3[id], .markdown h2[id], .markdown h3[id], .vp-doc h2[id], .vp-doc h3[id]").each((_i, h) => {
     const head = $(h);
     const id = head.attr("id")!;
     const title = collapseWhitespace(head.text().replace(/​/g, "").replace(/#$/, ""));
