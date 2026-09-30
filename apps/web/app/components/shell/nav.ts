@@ -16,11 +16,16 @@ export interface NavItem {
 
 export const SIDEBAR: Array<{ title: string; items: NavItem[] }> = [
   {
-    title: "内容",
+    title: "业务工作台",
     items: [
       { to: "/", label: "业务雷达", icon: IconBolt, end: true },
       { to: "/recommendations", label: "推荐选题", icon: IconDoc },
       { to: "/opportunities", label: "商业机会", icon: IconChart },
+    ],
+  },
+  {
+    title: "资讯与资料",
+    items: [
       { to: "/all", label: "行业动态", icon: IconList },
       { to: "/selected", label: "精选资讯", icon: IconBolt },
       { to: "/hot", label: "热点榜", icon: IconFlame },
@@ -30,7 +35,7 @@ export const SIDEBAR: Array<{ title: string; items: NavItem[] }> = [
     ],
   },
   {
-    title: "更多",
+    title: "关于",
     items: [
       { to: "/about", label: "关于", icon: IconHeart },
       { to: "/changelog", label: "更新日志", icon: IconHistory, changelog: true },

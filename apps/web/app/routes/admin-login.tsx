@@ -28,13 +28,14 @@ export default function AdminLogin() {
   const { returnTo, error, password, feishu } = useLoaderData<typeof loader>();
   const message = error ? (ERRORS[error] ?? ERRORS.wrong) : !password ? ERRORS.unset : null;
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-bg px-4">
-      <div className="w-full max-w-[360px]">
-        <div className="flex items-center justify-center gap-2">
-          <Wordmark size={26} className="text-ink" />
-          <span className="text-[15px] font-semibold text-ink-3">后台</span>
+    <div className="flex min-h-dvh items-center justify-center bg-bg px-5 py-10">
+      <div className="w-full max-w-[420px]">
+        <div className="flex items-center gap-3">
+          <Wordmark size={22} className="text-ink" />
+          <span className="shrink-0 whitespace-nowrap text-[15px] font-semibold text-ink-3">后台</span>
         </div>
-        <form method="post" action="/api/auth/password" className="card mt-8 p-6">
+        <form method="post" action="/api/auth/password" className="mt-8 border-y border-line bg-surface px-6 py-8 sm:px-8">
+          <h1 className="font-editorial mb-6 text-[28px] text-ink">管理工作台</h1>
           <input type="hidden" name="return" value={returnTo} />
           <label htmlFor="password" className="block text-[13px] font-medium text-ink-2">
             管理员密码
@@ -46,7 +47,7 @@ export default function AdminLogin() {
             autoComplete="current-password"
             required
             autoFocus
-            className="mt-2 h-10 w-full rounded-full border border-line-strong bg-surface px-4 text-[14px] text-ink outline-none transition-colors focus:border-accent"
+            className="mt-2 h-12 w-full rounded-control border border-line-strong bg-surface px-4 text-[14px] text-ink outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/15"
           />
           {message && (
             <p role="alert" className="mt-3 text-[12.5px] leading-relaxed text-hot">

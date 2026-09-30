@@ -3,10 +3,14 @@
 import { SITE } from "@aihot/industry/site";
 
 export function Wordmark({ size = 22, className = "" }: { size?: number; className?: string }) {
+  const splitName = SITE.name === "WorkBuddy做大做强";
   return (
-    <span className={`inline-flex items-center font-black leading-none tracking-[-0.03em] ${className}`} style={{ fontSize: size }} aria-label={SITE.name} role="img">
-      <span aria-hidden="true" className="mr-[0.3em] inline-block size-[0.42em] rounded-full bg-accent" />
-      <span aria-hidden="true">{SITE.name}</span>
+    <span className={`inline-flex shrink-0 items-center gap-[0.55em] whitespace-nowrap ${className}`} style={{ fontSize: size }} aria-label={SITE.name} role="img">
+      <span aria-hidden="true" className="inline-block h-[1.7em] w-[2px] shrink-0 bg-accent" />
+      <span aria-hidden="true" className="inline-flex flex-col items-start gap-[0.28em] leading-none">
+        <span className="font-semibold tracking-[-0.035em]">{splitName ? "WorkBuddy" : SITE.name}</span>
+        {splitName && <span className="font-editorial text-[0.64em] font-medium tracking-[0.18em] text-ink-3">做大做强</span>}
+      </span>
     </span>
   );
 }
