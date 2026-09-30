@@ -21,4 +21,22 @@ test('gateway protects every data outlet and rejects forged sessions', async(t)=
   const cookie=full.split(';')[0];assert.equal(await(await fetch(base+'/api/site/radar',{headers:{cookie}})).text(),'private data');
   assert.equal((await fetch(base+'/api/site/radar',{headers:{cookie:cookie+'x'}})).status,401);
   assert.equal((await fetch(base+'/_auth/login',{method:'POST',headers:{origin:'https://evil.example'},body:'username=team&password=test-password-at-least-16'})).status,403);
+  await t.test('HTTP entry redirects to HTTPS before showing a password form',async()=>{
+    const response=await fetch(base+'/opportunities?type=peer',{headers:{accept:'text/html','x-forwarded-proto':'http'},redirect:'manual'});
+    assert.equal(response.status,303);
+    assert.equal(response.headers.get('location'),'https://radar.example.org/opportunities?type=peer');
+    assert.doesNotMatch(await response.text(),/name="password"/);
+  });
+  await t.test('stale HTTP form returns to HTTPS without replaying credentials',async()=>{
+    const response=await fetch(base+'/_auth/login',{method:'POST',headers:{origin:'http://radar.example.org','x-forwarded-proto':'http'},body:'username=team&password=test-password-at-least-16',redirect:'manual'});
+    assert.equal(response.status,303);
+    assert.equal(response.headers.get('location'),'https://radar.example.org/');
+    assert.equal(response.headers.get('set-cookie'),null);
+  });
+  await t.test('HTTPS errors are typed text, not downloadable login files',async()=>{
+    const response=await fetch(base+'/_auth/login',{method:'POST',headers:{origin:'http://radar.example.org','x-forwarded-proto':'https'},body:'username=team&password=test-password-at-least-16',redirect:'manual'});
+    assert.equal(response.status,403);
+    assert.match(response.headers.get('content-type')||'',/^text\/plain; charset=utf-8$/);
+    assert.match(response.headers.get('strict-transport-security')||'',/max-age=/);
+  });
 });

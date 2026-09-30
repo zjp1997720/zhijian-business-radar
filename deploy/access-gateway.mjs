@@ -6,6 +6,7 @@ const password = process.env.ACCESS_PASSWORD;
 const secret = process.env.SESSION_SECRET;
 if (!user || !password || password.length < 16 || !secret || secret.length < 32) throw new Error('Access credentials are required');
 const origin = new URL(process.env.SITE_URL);
+if (origin.protocol !== 'https:') throw new Error('SITE_URL must use HTTPS');
 const upstream = new URL(process.env.ACCESS_UPSTREAM || 'http://127.0.0.1:3300');
 if (!['127.0.0.1', 'localhost', '[::1]'].includes(upstream.hostname)) throw new Error('Upstream must be local');
 const cookieName = 'radar_access';
@@ -28,6 +29,14 @@ const server = http.createServer((req,res)=>{
   res.setHeader('X-Robots-Tag','noindex, nofollow, noarchive');
   res.setHeader('Cache-Control','private, no-store');
   res.setHeader('X-Content-Type-Options','nosniff');
+  res.setHeader('Content-Type','text/plain; charset=utf-8');
+  // Only the local tunnel can reach this listener; it supplies the visitor protocol.
+  if (String(req.headers['x-forwarded-proto']||'').toLowerCase()==='http') {
+    // 303 discards stale HTTP form bodies instead of replaying passwords.
+    const path=(req.method==='GET'||req.method==='HEAD') && req.url.startsWith('/') ? req.url : '/';
+    res.writeHead(303,{'Location':origin.origin+path});return res.end('请使用 HTTPS 安全连接。');
+  }
+  res.setHeader('Strict-Transport-Security','max-age=31536000');
   if (req.url === '/_auth/login' && req.method==='POST') {
     if (req.headers.origin && req.headers.origin!==origin.origin) {res.writeHead(403);return res.end('Forbidden');}
     const ip = String(req.headers['cf-connecting-ip'] || req.socket.remoteAddress);
