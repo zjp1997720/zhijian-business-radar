@@ -11,6 +11,7 @@ export interface RadarInput {
   url: string;
   publishedAt: string | null;
   text: string;
+  tags?: string[];
 }
 const text = z.string().trim().min(1).max(1200);
 // An English paragraph can exceed 600 characters. It must still match the entire
@@ -22,7 +23,7 @@ export const RadarSchema = z.object({
     evidenceGaps: z.array(text).max(8), citations: z.array(citation).min(1).max(5),
   }).strict()).max(5),
   opportunities: z.array(z.object({
-    title: text, kind: z.enum(["procurement", "demand", "channel", "case"]), summary: text,
+    title: text, kind: z.enum(["procurement", "demand", "channel", "case", "peer"]), summary: text,
     organization: text.nullable(), region: text.nullable(),
     deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
     deadlineCitation: citation.nullable(), recommendedAction: text,
@@ -53,6 +54,13 @@ export function opportunityStatus(kind: RadarOpportunity["kind"], deadline: stri
   if (deadline && deadline < beijingDate(now)) return "closed";
   if (deadline) return "open";
   return "unknown";
+}
+
+/** A dated old plan proves a plan existed, not a present purchase or completed delivery. */
+export function historicalPlan(source: RadarInput, now: Date): boolean {
+  const date = source.publishedAt ? new Date(source.publishedAt).getTime() : NaN;
+  return Number.isFinite(date) && date < now.getTime() - 90 * 86400000 &&
+    /计划|拟开展|拟举办|将开展|将举办|planned|plans to/i.test(`${source.title}\n${source.text}`);
 }
 
 export function emptyRadar(): RadarResponse {
@@ -87,7 +95,7 @@ export function validateRadar(raw: unknown, inputs: RadarInput[], recentKeys: Se
   for (const opp of parsed.opportunities) {
     // Dates on a case/market signal describe delivery, launches or migrations, not
     // an application deadline. Drop that unsupported interpretation, retain facts.
-    if (opp.kind === "demand" || opp.kind === "case") {
+    if (opp.kind === "demand" || opp.kind === "case" || opp.kind === "peer") {
       opp.deadline = null;
       opp.deadlineCitation = null;
     }
@@ -97,8 +105,14 @@ export function validateRadar(raw: unknown, inputs: RadarInput[], recentKeys: Se
     for (const value of [opp.organization, opp.region]) {
       if (value && !sources.some((s) => `${s.title}\n${s.text}`.includes(value))) throw new Error("Radar opportunity attribute is not in collected evidence");
     }
-    if (opp.kind === "channel" && !opp.citations.some((c) => /合作伙伴|伙伴计划|渠道伙伴|代理招募|合作招募|partner(?:ship)? program|channel partner|reseller|distributor|join.{0,30}partner/i.test(c.quote))) {
+    if (opp.kind === "channel" && !opp.citations.some((c) =>
+      /代理招募|合作招募|伙伴招募|渠道招募/i.test(c.quote) ||
+      (/合作伙伴|伙伴计划|渠道伙伴|partner(?:ship)? program|channel partner|reseller|distributor/i.test(c.quote) &&
+       /招募|申请|加入|报名|入口|成为|apply|join|register|sign up|recruit/i.test(c.quote)))) {
       throw new Error("Radar channel requires an explicit partner or reseller opportunity");
+    }
+    if (opp.kind === "peer" && !opp.citations.some((c) => /培训|陪跑|咨询|服务|方案|套餐|交付|部署|落地|training|consulting|implementation|service|deployment/i.test(c.quote))) {
+      throw new Error("Radar peer reference requires explicit service or delivery evidence");
     }
     if (opp.deadline) {
       const date = new Date(`${opp.deadline}T00:00:00Z`);
@@ -110,15 +124,17 @@ export function validateRadar(raw: unknown, inputs: RadarInput[], recentKeys: Se
       const datePattern = new RegExp(`${y}[-/.年]0?${m}[-/.月]0?${d}(?:日|(?=\\D|$))`);
       if (!datePattern.test(normalized) || !/截止|递交|提交|投标|报名|deadline|closing|close date|due date/i.test(normalized)) throw new Error("Radar deadline quote does not identify a submission deadline");
     } else if (opp.deadlineCitation) throw new Error("Radar deadline citation requires a deadline");
-    const historical = sources.some((s) => historicalNotice(`${s.title}\n${s.text}`));
+    const oldPlan = sources.some((s) => historicalPlan(s, now));
+    const historical = sources.some((s) => historicalNotice(`${s.title}\n${s.text}`)) || oldPlan;
     const status = opportunityStatus(opp.kind, opp.deadline, historical, now);
     const itemId = id(opp.kind, sources.map((s) => s.key));
     if (opportunityIds.has(itemId)) continue;
     opportunityIds.add(itemId);
     opportunities.push({ id: itemId, title: opp.title, kind: opp.kind, summary: opp.summary,
       organization: opp.organization, region: opp.region, deadline: opp.deadline, status,
-      recommendedAction: status === "historical" && opp.kind === "procurement" ? "作为历史采购与中标案例研究需求和供应商；本条结果公告不能用于投标。" : status === "closed" ? "截止日期已过，先核验是否有延期或后续采购公告。" : opp.recommendedAction,
-      sourceUrl: source.url, publishedAt: source.publishedAt });
+      recommendedAction: status === "historical" && oldPlan ? "作为当时的计划研究需求；不能推定计划已经实施，也不能据此参与当前采购。" : status === "historical" && opp.kind === "procurement" ? "作为历史采购与中标案例研究需求和供应商；本条结果公告不能用于投标。" : status === "closed" ? "截止日期已过，先核验是否有延期或后续采购公告。" : opp.recommendedAction,
+      sourceUrl: source.url, publishedAt: source.publishedAt,
+      ...((opp.kind === "peer" || sources.some((s) => s.sourceId === "external-public-companies" || s.tags?.includes("nature:peer-self-report"))) ? { sourceAttribution: "来源自述；服务能力、客户与效果需独立核验。" } : {}) });
     evidence.push({ id: itemId, citations: [...opp.citations, ...(opp.deadlineCitation ? [opp.deadlineCitation] : [])].map((c) => ({ ...c, sourceId: byId.get(c.articleId)!.sourceId, key: byId.get(c.articleId)!.key })) });
   }
   return { content: { recommendations, opportunities }, evidence, recommendedKeys: [...recommendedKeys] };

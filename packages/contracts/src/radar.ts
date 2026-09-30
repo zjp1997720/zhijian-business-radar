@@ -16,7 +16,7 @@ export interface RadarRecommendation {
 export interface RadarOpportunity {
   id: string;
   title: string;
-  kind: "procurement" | "demand" | "channel" | "case";
+  kind: "procurement" | "demand" | "channel" | "case" | "peer";
   summary: string;
   organization: string | null;
   region: string | null;
@@ -25,9 +25,14 @@ export interface RadarOpportunity {
   recommendedAction: string;
   sourceUrl: string;
   publishedAt: string | null;
+  firstSeenAt?: string;
+  updatedAt?: string;
+  sourceAttribution?: string;
 }
 export interface RadarResponse {
   generatedAt: string | null;
+  poolUpdatedAt?: string | null;
+  opportunityCount?: number;
   recommendations: RadarRecommendation[];
   opportunities: RadarOpportunity[];
   status: { lastRunAt: string | null; lastError: string | null };

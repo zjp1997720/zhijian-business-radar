@@ -1,0 +1,324 @@
+{
+  "version": 1,
+  "limits": {
+    "maxQueries": 6,
+    "maxHitsPerQuery": 10,
+    "maxSources": 24,
+    "maxListItems": 20,
+    "maxDetails": 20,
+    "detailConcurrency": 2,
+    "hostIntervalMs": 1000,
+    "timeoutMs": 12000,
+    "maxResponseBytes": 1500000,
+    "maxRequests": 40,
+    "runBudgetMs": 180000,
+    "maxDetailsPerSource": 4
+  },
+  "relevance": {
+    "aiTerms": [
+      "人工智能",
+      "AI",
+      "WorkBuddy",
+      "智能体",
+      "大模型",
+      "生成式智能",
+      "数字员工"
+    ],
+    "businessTerms": [
+      "培训",
+      "采购",
+      "招标",
+      "中标",
+      "成交",
+      "询价",
+      "需求",
+      "供应商",
+      "合作伙伴",
+      "服务商",
+      "代理",
+      "分销",
+      "讲师",
+      "渠道",
+      "企业",
+      "政务",
+      "办公",
+      "实训",
+      "教师",
+      "人才"
+    ],
+    "maxTermDistance": 240,
+    "minBodyChars": 200
+  },
+  "sources": [
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 360,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "持续官网列表；仅检查首屏匹配原文链接，不承诺全量。",
+      "id": "business-discovery-dongguan-union",
+      "name": "东莞市总工会·工会新闻",
+      "sourceNature": "union",
+      "url": "https://dgzgh.dg.gov.cn/dgzgh/ghxw/list.shtml",
+      "linkPattern": "^/dgzgh/ghxw/\\d{6}/[^/]+\\.shtml$",
+      "expectedListTitle": "工会新闻",
+      "dateSelector": ".info"
+    },
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 360,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "持续官网列表；仅检查首屏匹配原文链接，不承诺全量。",
+      "id": "business-discovery-gsei-tenders",
+      "name": "甘肃经济信息网·公开招标",
+      "sourceNature": "procurement-platform",
+      "url": "https://www.gsei.com.cn/html/1336/",
+      "linkPattern": "^/html/1336/\\d{4}-\\d{2}-\\d{2}/content-\\d+\\.html$",
+      "expectedListTitle": "公开招标",
+      "bodySelector": ".artcon",
+      "dateSelector": ".artinfo"
+    },
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 360,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "持续官网列表；仅检查首屏匹配原文链接，不承诺全量。",
+      "id": "business-discovery-gsei-awards",
+      "name": "甘肃经济信息网·中标公示",
+      "sourceNature": "procurement-platform",
+      "url": "https://www.gsei.com.cn/html/1337/",
+      "linkPattern": "^/html/1337/\\d{4}-\\d{2}-\\d{2}/content-\\d+\\.html$",
+      "expectedListTitle": "中标公示",
+      "bodySelector": ".artcon",
+      "dateSelector": ".artinfo"
+    },
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 360,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "持续官网列表；仅检查首屏匹配原文链接，不承诺全量。",
+      "id": "business-discovery-sip-education",
+      "name": "苏州工业园区教育局·通知公告",
+      "sourceNature": "government",
+      "url": "https://www.sipac.gov.cn/yqjyj/tzgg/common_list.shtml",
+      "linkPattern": "^/yqjyj/tzgg/\\d{6}/[^/]+\\.shtml$",
+      "expectedListTitle": "通知公告",
+      "dateSelector": ".info"
+    },
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 360,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "持续官网列表；仅检查首屏匹配原文链接，不承诺全量。",
+      "id": "business-discovery-isc-notices",
+      "name": "中国互联网协会·通知公告",
+      "sourceNature": "association",
+      "url": "https://www.isc.org.cn/category/7330.html",
+      "linkPattern": "^/article/\\d+\\.html$",
+      "expectedListTitle": "中国互联网协会",
+      "bodySelector": ".new-cont",
+      "dateSelector": ".new-tips"
+    },
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 360,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "同行自述：腾讯授权、业绩和效果不得当作已获官方核验；需保留原话并核实。",
+      "id": "business-discovery-hiruiai-news",
+      "name": "海睿数科·公司动态（同行自述）",
+      "sourceNature": "peer-self-report",
+      "url": "https://www.hiruiai.com/news",
+      "linkPattern": "^/news/\\d+$",
+      "expectedListTitle": "公司动态|新闻",
+      "bodySelector": "article.article-body",
+      "dateSelector": ".article-meta span:first-child"
+    },
+    {
+      "enabled": true,
+      "participationMode": "editorial",
+      "intervalMinutes": 120,
+      "linkSelector": "a[href]",
+      "verifiedAt": "2026-10-01",
+      "note": "持续官网列表；仅检查首屏匹配原文链接，不承诺全量。",
+      "id": "business-discovery-ccgp-notices",
+      "name": "中国政府采购网·地方公告",
+      "sourceNature": "procurement-platform",
+      "url": "https://www.ccgp.gov.cn/cggg/dfgg/",
+      "linkPattern": "^/cggg/dfgg/[^/]+/\\d{6}/[^/]+\\.htm$",
+      "expectedListTitle": "地方公告|中国政府采购网",
+      "bodySelector": ".vF_detail_content"
+    },
+    {
+      "id": "business-discovery-sic",
+      "name": "国家信息中心·培训案例",
+      "enabled": true,
+      "sourceNature": "public-institution",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://datasec.sic.gov.cn/sic/83/79/0923/20260923163634183113249_pc.html",
+      "seedUrls": [
+        "https://datasec.sic.gov.cn/sic/83/79/0923/20260923163634183113249_pc.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。",
+      "bodySelector": ".articleDetailsText",
+      "dateSelector": ".articleDetailsTop"
+    },
+    {
+      "id": "business-discovery-huaian-social",
+      "name": "淮安市人社局·社保培训案例",
+      "enabled": true,
+      "sourceNature": "government",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://rsj.huaian.gov.cn/col/3932_871247/art/17855136/1787218481001ioXVbvkj.html",
+      "seedUrls": [
+        "https://rsj.huaian.gov.cn/col/3932_871247/art/17855136/1787218481001ioXVbvkj.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+    },
+    {
+      "id": "business-discovery-longgang-investment",
+      "name": "龙岗城投·工作动态案例",
+      "enabled": true,
+      "sourceNature": "enterprise",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://www.lg.gov.cn/bmzz/ctjt/xxgk/qt/gzdt/content/post_12894108.html",
+      "seedUrls": [
+        "https://www.lg.gov.cn/bmzz/ctjt/xxgk/qt/gzdt/content/post_12894108.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+    },
+    {
+      "id": "business-discovery-hust-training",
+      "name": "华中科技大学·培训通知案例",
+      "enabled": true,
+      "sourceNature": "education",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://cfd.hust.edu.cn/info/1003/2219.htm",
+      "seedUrls": [
+        "https://cfd.hust.edu.cn/info/1003/2219.htm"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。",
+      "bodySelector": ".v_news_content",
+      "dateSelector": ".dpzw > p span"
+    },
+    {
+      "id": "business-discovery-yueyang-science",
+      "name": "岳阳市科协·培训案例",
+      "enabled": true,
+      "sourceNature": "government",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://www.yueyang.gov.cn/yyast/31400/73060/content_2401319.html",
+      "seedUrls": [
+        "https://www.yueyang.gov.cn/yyast/31400/73060/content_2401319.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+    },
+    {
+      "id": "business-discovery-liuzhou-enterprise",
+      "name": "柳州市中小企业服务中心·培训案例",
+      "enabled": true,
+      "sourceNature": "public-institution",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://www.smelz.cn/px/detail-438.html",
+      "seedUrls": [
+        "https://www.smelz.cn/px/detail-438.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+    },
+    {
+      "id": "business-discovery-zhuhai-social",
+      "name": "珠海市人社局·培训案例",
+      "enabled": true,
+      "sourceNature": "government",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://zhrsj.zhuhai.gov.cn/gkmlpt/content/3/3938/post_3938638.html",
+      "seedUrls": [
+        "https://zhrsj.zhuhai.gov.cn/gkmlpt/content/3/3938/post_3938638.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+    },
+    {
+      "id": "business-discovery-peer-channel-seeds",
+      "name": "WorkBuddy同行·渠道与培训产品自述",
+      "enabled": true,
+      "sourceNature": "peer-self-report",
+      "participationMode": "editorial",
+      "intervalMinutes": 1440,
+      "url": "https://hiruiai.com/partner",
+      "seedUrls": [
+        "https://hiruiai.com/partner",
+        "https://anspire.cn/news/workbuddy-channel-partner-recruit/",
+        "https://workbuddy.fenyai.com/partner/join",
+        "https://workbuddy.gotoai.world/training/WorkBuddy_Training.html"
+      ],
+      "note": "主Agent提供的已公开案例/产品原文种子；本程序仍重新抓取并核验正文，非持续列表，非新增采购。"
+    }
+  ],
+  "queries": [
+    {
+      "id": "business-discovery-query-1",
+      "name": "政府AI培训需求",
+      "query": "\"人工智能\" \"培训\" \"政府\"",
+      "enabled": false,
+      "intervalMinutes": 720,
+      "rssUrlTemplate": "https://operator-approved-search.invalid/rss?q={query}"
+    },
+    {
+      "id": "business-discovery-query-2",
+      "name": "工会AI培训需求",
+      "query": "\"人工智能\" \"培训\" \"工会\"",
+      "enabled": false,
+      "intervalMinutes": 720,
+      "rssUrlTemplate": "https://operator-approved-search.invalid/rss?q={query}"
+    },
+    {
+      "id": "business-discovery-query-3",
+      "name": "协会AI培训需求",
+      "query": "\"人工智能\" \"培训\" \"协会\"",
+      "enabled": false,
+      "intervalMinutes": 720,
+      "rssUrlTemplate": "https://operator-approved-search.invalid/rss?q={query}"
+    },
+    {
+      "id": "business-discovery-query-4",
+      "name": "园区AI培训需求",
+      "query": "\"AI\" \"培训\" \"园区\"",
+      "enabled": false,
+      "intervalMinutes": 720,
+      "rssUrlTemplate": "https://operator-approved-search.invalid/rss?q={query}"
+    },
+    {
+      "id": "business-discovery-query-5",
+      "name": "人工智能办公采购",
+      "query": "\"人工智能\" \"办公\" \"采购\"",
+      "enabled": false,
+      "intervalMinutes": 720,
+      "rssUrlTemplate": "https://operator-approved-search.invalid/rss?q={query}"
+    },
+    {
+      "id": "business-discovery-query-6",
+      "name": "WorkBuddy代理同行",
+      "query": "\"WorkBuddy\" \"代理\" \"培训\"",
+      "enabled": false,
+      "intervalMinutes": 720,
+      "rssUrlTemplate": "https://operator-approved-search.invalid/rss?q={query}"
+    }
+  ]
+}
