@@ -22,6 +22,8 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=$base/data
 UMask=0077
+MemoryMax=700M
+OOMScoreAdjust=500
 EOF
 cat >/etc/systemd/system/radar-business-discovery.timer <<EOF
 [Unit]

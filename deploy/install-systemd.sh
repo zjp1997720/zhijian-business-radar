@@ -5,8 +5,9 @@ node="$base/runtime/node-v24.19.0-linux-x64/bin/node"
 test -x "$node"
 test -f "$base/runtime.env"
 mkdir -p "$base/data"
-chown radar:radar "$base/data" "$base/runtime.env" "$base/runtime/radar-tunnel-token"
-chmod 600 "$base/runtime.env" "$base/runtime/radar-tunnel-token"
+chown radar:radar "$base/data" "$base/runtime.env"
+chmod 600 "$base/runtime.env"
+if [ -f "$base/runtime/radar-tunnel-token" ]; then chown radar:radar "$base/runtime/radar-tunnel-token"; chmod 600 "$base/runtime/radar-tunnel-token"; fi
 chmod 755 "$base/runtime/radar-cloudflared-linux-amd64"
 # The SSR website and access gateway receive only the configuration they use.
 # Model credentials and the database URL remain in backend processes.
@@ -28,10 +29,10 @@ chown radar:radar "$base/web.env" "$base/access.env"
 for process in api web worker access; do
   envfile="$base/runtime.env"
   case "$process" in
-    api) entry=apps/api/src/main.ts ;;
-    web) entry=apps/web/server.ts; envfile="$base/web.env" ;;
-    worker) entry=apps/worker/src/main.ts ;;
-    access) entry=deploy/access-gateway.mjs; envfile="$base/access.env" ;;
+    api) entry=apps/api/src/main.ts; mem=400M ;;
+    web) entry=apps/web/server.ts; envfile="$base/web.env"; mem=300M ;;
+    worker) entry=apps/worker/src/main.ts; mem=700M ;;
+    access) entry=deploy/access-gateway.mjs; envfile="$base/access.env"; mem=150M ;;
   esac
   cat >"/etc/systemd/system/radar-$process.service" <<EOF
 [Unit]
@@ -52,6 +53,9 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=$base/data
 UMask=0077
+# Shared host: radar yields memory first so co-located services keep running.
+MemoryMax=$mem
+OOMScoreAdjust=500
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -71,12 +75,16 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
+MemoryMax=150M
+OOMScoreAdjust=500
 [Install]
 WantedBy=multi-user.target
 EOF
 systemctl daemon-reload
 systemctl enable radar-api radar-web radar-worker radar-access radar-tunnel
-systemctl restart radar-api radar-web radar-access radar-tunnel
+# Tunnel starts once its token file exists; worker after seeds and budgets are verified.
+systemctl restart radar-api radar-web radar-access
+if [ -f "$base/runtime/radar-tunnel-token" ]; then systemctl restart radar-tunnel; fi
 # Worker starts only after seeds, budgets and initial collection are verified.
 
 install -d -o postgres -g postgres -m 700 /var/backups/zhijian-business-radar
